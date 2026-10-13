@@ -365,7 +365,6 @@ const LogoOutro: React.FC<{frame: number}> = ({frame}) => {
     config: {damping: 18, stiffness: 118, mass: 0.8},
   });
   const logoOpacity = interpolate(local, [50, 68], [0, 1], clamp);
-  const roleOpacity = interpolate(local, [69, 84], [0, 1], clamp);
 
   return (
     <AbsoluteFill style={{overflow: 'hidden'}}>
@@ -424,20 +423,6 @@ const LogoOutro: React.FC<{frame: number}> = ({frame}) => {
         }}
       >
         <Img src={staticFile('logo-mci-02.svg')} style={{width: 450, height: 182, objectFit: 'contain'}} />
-        <div style={{marginTop: 40, width: 68, height: 3, background: C.cyan, opacity: roleOpacity}} />
-        <div
-          style={{
-            marginTop: 20,
-            opacity: roleOpacity,
-            color: C.ink,
-            fontFamily: 'Arial, Helvetica, sans-serif',
-            fontSize: 29,
-            fontWeight: 700,
-            letterSpacing: 1.15,
-          }}
-        >
-          Employee Experience Designer
-        </div>
       </div>
     </AbsoluteFill>
   );
