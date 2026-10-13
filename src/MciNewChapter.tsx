@@ -239,7 +239,7 @@ const BigWord: React.FC<{
 };
 
 const SceneThree: React.FC<{frame: number}> = ({frame}) => {
-  const opacity = sceneOpacity(frame, 116, 196, 6);
+  const opacity = sceneOpacity(frame, 116, 238, 6);
   const lock = spring({
     frame: Math.max(0, frame - 176),
     fps: 30,
@@ -293,9 +293,9 @@ const SceneThree: React.FC<{frame: number}> = ({frame}) => {
 };
 
 const SceneFour: React.FC<{frame: number}> = ({frame}) => {
-  const start = 188;
+  const start = 230;
   const local = Math.max(0, frame - start);
-  const opacity = sceneOpacity(frame, 188, 294, 6);
+  const opacity = sceneOpacity(frame, 230, 336, 6);
 
   const tag = spring({
     frame: Math.max(0, local),
@@ -368,7 +368,7 @@ const SceneFour: React.FC<{frame: number}> = ({frame}) => {
           left: 68,
           bottom: 150,
           height: 4,
-          width: interpolate(frame, [214, 250], [0, 700], clamp),
+          width: interpolate(frame, [256, 292], [0, 700], clamp),
           background: C.cyan,
           opacity: 0.92,
         }}
@@ -378,7 +378,7 @@ const SceneFour: React.FC<{frame: number}> = ({frame}) => {
 };
 
 const LogoOutro: React.FC<{frame: number}> = ({frame}) => {
-  const start = 268;
+  const start = 310;
   const local = Math.max(0, frame - start);
   const wipe = interpolate(local, [20, 58], [0, 1], clamp);
   const logo = spring({
@@ -474,9 +474,9 @@ export const MciNewChapter: React.FC = () => {
       <Background frame={frame} />
       {frame < 58 ? <SceneOne frame={frame} /> : null}
       {frame >= 44 && frame < 130 ? <SceneTwo frame={frame} /> : null}
-      {frame >= 116 && frame < 196 ? <SceneThree frame={frame} /> : null}
-      {frame >= 188 && frame < 294 ? <SceneFour frame={frame} /> : null}
-      {frame >= 268 ? <LogoOutro frame={frame} /> : null}
+      {frame >= 116 && frame < 238 ? <SceneThree frame={frame} /> : null}
+      {frame >= 230 && frame < 336 ? <SceneFour frame={frame} /> : null}
+      {frame >= 310 ? <LogoOutro frame={frame} /> : null}
     </AbsoluteFill>
   );
 };
