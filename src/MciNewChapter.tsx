@@ -295,7 +295,7 @@ const SceneThree: React.FC<{frame: number}> = ({frame}) => {
 const SceneFour: React.FC<{frame: number}> = ({frame}) => {
   const start = 188;
   const local = Math.max(0, frame - start);
-  const opacity = sceneOpacity(frame, 188, 284, 6);
+  const opacity = sceneOpacity(frame, 188, 294, 6);
 
   const tag = spring({
     frame: Math.max(0, local),
@@ -338,9 +338,9 @@ const SceneFour: React.FC<{frame: number}> = ({frame}) => {
       </div>
 
       {[
-        ['EMPLOYEE', p1, 300, C.white, 152],
-        ['EXPERIENCE', p2, 445, C.white, 136],
-        ['DESIGNER', p3, 592, C.cyan, 170],
+        ['EMPLOYEE', p1, 310, C.white, 148],
+        ['EXPERIENCE', p2, 454, C.white, 132],
+        ['DESIGNER', p3, 600, C.cyan, 166],
       ].map(([word, p, top, color, size]) => (
         <div
           key={word as string}
@@ -366,35 +366,19 @@ const SceneFour: React.FC<{frame: number}> = ({frame}) => {
         style={{
           position: 'absolute',
           left: 68,
-          bottom: 140,
+          bottom: 150,
           height: 4,
-          width: interpolate(frame, [212, 248], [0, 760], clamp),
+          width: interpolate(frame, [214, 250], [0, 700], clamp),
           background: C.cyan,
-          opacity: 0.95,
+          opacity: 0.92,
         }}
       />
-
-      <div
-        style={{
-          position: 'absolute',
-          left: 72,
-          bottom: 92,
-          color: C.muted,
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          fontSize: 26,
-          fontWeight: 650,
-          letterSpacing: 1.2,
-          opacity: interpolate(frame, [220, 252], [0, 1], clamp),
-        }}
-      >
-        EMPLOYEE EXPERIENCE, PEOPLE ANALYTICS, AI IN HR
-      </div>
     </AbsoluteFill>
   );
 };
 
 const LogoOutro: React.FC<{frame: number}> = ({frame}) => {
-  const start = 258;
+  const start = 268;
   const local = Math.max(0, frame - start);
   const wipe = interpolate(local, [20, 58], [0, 1], clamp);
   const logo = spring({
@@ -491,8 +475,8 @@ export const MciNewChapter: React.FC = () => {
       {frame < 58 ? <SceneOne frame={frame} /> : null}
       {frame >= 44 && frame < 130 ? <SceneTwo frame={frame} /> : null}
       {frame >= 116 && frame < 196 ? <SceneThree frame={frame} /> : null}
-      {frame >= 188 && frame < 284 ? <SceneFour frame={frame} /> : null}
-      {frame >= 258 ? <LogoOutro frame={frame} /> : null}
+      {frame >= 188 && frame < 294 ? <SceneFour frame={frame} /> : null}
+      {frame >= 268 ? <LogoOutro frame={frame} /> : null}
     </AbsoluteFill>
   );
 };
