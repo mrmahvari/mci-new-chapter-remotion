@@ -1,24 +1,21 @@
 import React from 'react';
 import {
   AbsoluteFill,
-  Easing,
   Img,
   interpolate,
   spring,
   staticFile,
   useCurrentFrame,
-  useVideoConfig,
 } from 'remotion';
 
-const palette = {
-  cream: '#F5F3E9',
-  cream2: '#EEEDE1',
-  pistachio: '#D8E2D0',
-  sage: '#A9B9A0',
-  sageDeep: '#617665',
-  ink: '#1D2924',
-  gold: '#B9A06E',
-  white: '#FFFDF7',
+const C = {
+  navy: '#07131F',
+  cyan: '#12A8E0',
+  cyanSoft: '#53C7EF',
+  paper: '#F7F6F2',
+  ink: '#0A1720',
+  white: '#F7FBFD',
+  muted: '#8EA5B5',
 };
 
 const clamp = {
@@ -26,362 +23,281 @@ const clamp = {
   extrapolateRight: 'clamp' as const,
 };
 
-const ease = Easing.bezier(0.2, 0.85, 0.2, 1);
+const sceneOpacity = (frame: number, start: number, end: number, fade = 8) =>
+  Math.min(
+    interpolate(frame, [start, start + fade], [0, 1], clamp),
+    interpolate(frame, [end - fade, end], [1, 0], clamp),
+  );
 
-const fadeWindow = (frame: number, start: number, end: number, fade = 10) => {
-  const fadeIn = interpolate(frame, [start, start + fade], [0, 1], clamp);
-  const fadeOut = interpolate(frame, [end - fade, end], [1, 0], clamp);
-  return Math.min(fadeIn, fadeOut);
-};
-
-const OrganicBackdrop: React.FC<{frame: number}> = ({frame}) => {
-  const drift = interpolate(frame, [0, 450], [-18, 26], clamp);
-  const drift2 = interpolate(frame, [0, 450], [14, -20], clamp);
-
+const Grid: React.FC<{frame: number}> = ({frame}) => {
+  const shift = interpolate(frame, [0, 390], [0, 38], clamp);
   return (
-    <AbsoluteFill style={{overflow: 'hidden', background: palette.cream}}>
+    <AbsoluteFill style={{background: C.navy, overflow: 'hidden'}}>
       <div
         style={{
           position: 'absolute',
           inset: 0,
           background:
-            'radial-gradient(circle at 78% 10%, rgba(255,255,255,0.88), transparent 36%), linear-gradient(135deg, #F8F5EA 0%, #EEF1E4 52%, #F5F0E2 100%)',
+            'linear-gradient(135deg, rgba(255,255,255,0.018), transparent 36%), radial-gradient(circle at 82% 14%, rgba(18,168,224,0.09), transparent 26%)',
         }}
       />
-
-      <svg
-        viewBox="0 0 1080 1350"
-        width="1080"
-        height="1350"
-        style={{position: 'absolute', inset: 0}}
-      >
-        <g transform={`translate(${drift} 0)`} opacity="0.78">
-          <path
-            d="M-140 390 C 120 215, 325 235, 505 380 C 670 512, 795 520, 1210 265 L 1210 760 C 970 865, 690 760, 470 645 C 245 530, 40 560,-140 690 Z"
-            fill={palette.pistachio}
-          />
-          <path
-            d="M-180 600 C 75 470, 305 470, 520 610 C 730 745, 900 700, 1220 505 L 1220 930 C 985 1030, 750 982, 500 860 C 230 728, 42 748,-180 875 Z"
-            fill="#C6D3BD"
-            opacity="0.52"
-          />
-        </g>
-
-        <g transform={`translate(${drift2} 0)`} fill="none">
-          <path
-            d="M-100 285 C 170 140, 325 295, 520 475 C 735 674, 905 595, 1175 370"
-            stroke={palette.sageDeep}
-            strokeWidth="2"
-            opacity="0.38"
-          />
-          <path
-            d="M-160 490 C 135 315, 320 430, 510 595 C 730 785, 905 720, 1190 515"
-            stroke={palette.white}
-            strokeWidth="3"
-            opacity="0.72"
-          />
-          <path
-            d="M-120 820 C 190 665, 370 710, 585 825 C 795 937, 970 890, 1200 745"
-            stroke={palette.gold}
-            strokeWidth="1.8"
-            opacity="0.30"
-          />
-        </g>
-
-        <g opacity="0.7">
-          <circle cx="170" cy="245" r="8" fill={palette.sageDeep} />
-          <circle cx="575" cy="805" r="7" fill={palette.sageDeep} />
-          <circle cx="865" cy="870" r="7" fill={palette.gold} />
-        </g>
-
-        <circle cx="-110" cy="215" r="335" fill="none" stroke={palette.sageDeep} strokeWidth="2" opacity="0.18" />
-        <circle cx="1140" cy="240" r="300" fill="none" stroke={palette.sage} strokeWidth="2" opacity="0.20" />
-      </svg>
-
       <div
         style={{
           position: 'absolute',
-          inset: 0,
-          opacity: 0.065,
+          inset: -80,
+          transform: `translateY(${shift}px)`,
+          opacity: 0.12,
           backgroundImage:
-            'url("data:image/svg+xml,%3Csvg viewBox=%220 0 180 180%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.35%22/%3E%3C/svg%3E")',
+            'linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px)',
+          backgroundSize: '72px 72px',
+          maskImage: 'linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          left: 58,
+          top: 0,
+          bottom: 0,
+          width: 2,
+          background: C.cyan,
+          opacity: 0.75,
+          transform: `scaleY(${interpolate(frame, [0, 24], [0, 1], clamp)})`,
+          transformOrigin: 'top',
         }}
       />
     </AbsoluteFill>
   );
 };
 
-const Center: React.FC<React.PropsWithChildren<{style?: React.CSSProperties}>> = ({
-  children,
-  style,
-}) => (
-  <AbsoluteFill
-    style={{
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '0 90px',
-      ...style,
-    }}
-  >
-    {children}
-  </AbsoluteFill>
-);
-
-const NewChapter: React.FC<{frame: number}> = ({frame}) => {
-  const local = frame;
-  const enter = spring({frame: local, fps: 30, config: {damping: 18, stiffness: 135}});
-  const opacity = fadeWindow(frame, 0, 82, 12);
-  const tracking = interpolate(enter, [0, 1], [22, 7], clamp);
-  const y = interpolate(enter, [0, 1], [38, 0], clamp);
+const SceneOne: React.FC<{frame: number}> = ({frame}) => {
+  const opacity = sceneOpacity(frame, 0, 68, 7);
+  const aNew = spring({frame, fps: 30, config: {damping: 18, stiffness: 150, mass: 0.75}});
+  const chapter = spring({frame: Math.max(0, frame - 8), fps: 30, config: {damping: 18, stiffness: 145, mass: 0.8}});
 
   return (
-    <Center style={{opacity}}>
-      <div
-        style={{
-          transform: `translateY(${y}px)`,
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          fontSize: 92,
-          fontWeight: 700,
-          letterSpacing: tracking,
-          color: palette.ink,
-          textAlign: 'center',
-          lineHeight: 1.05,
-        }}
-      >
-        A NEW CHAPTER
-      </div>
-      <div
-        style={{
-          width: interpolate(enter, [0, 1], [0, 420], clamp),
-          height: 3,
-          borderRadius: 999,
-          marginTop: 32,
-          background: `linear-gradient(90deg, ${palette.sageDeep}, ${palette.gold})`,
-          opacity: 0.7,
-        }}
-      />
-    </Center>
+    <AbsoluteFill style={{opacity}}>
+      <div style={{
+        position:'absolute', left:88, top:190, color:C.cyan,
+        fontFamily:'Arial, Helvetica, sans-serif', fontWeight:700, fontSize:44,
+        letterSpacing:12, transform:`translateY(${interpolate(aNew,[0,1],[50,0],clamp)}px)`,
+        clipPath:`inset(${interpolate(aNew,[0,1],[100,0],clamp)}% 0 0 0)`
+      }}>A NEW</div>
+
+      <div style={{
+        position:'absolute', left:78, top:322, width:1120, color:C.white,
+        fontFamily:'Arial, Helvetica, sans-serif', fontWeight:800, fontSize:162,
+        letterSpacing:-8, lineHeight:0.86, whiteSpace:'nowrap',
+        transform:`translateX(${interpolate(chapter,[0,1],[-120,0],clamp)}px)`,
+        clipPath:`inset(0 ${interpolate(chapter,[0,1],[100,0],clamp)}% 0 0)`
+      }}>CHAPTER</div>
+
+      <div style={{
+        position:'absolute', left:88, top:545, height:3,
+        width:interpolate(frame,[16,44],[0,700],clamp), background:C.cyan
+      }}/>
+
+      <div style={{
+        position:'absolute', right:72, bottom:96, color:C.muted,
+        fontFamily:'Arial, Helvetica, sans-serif', fontSize:20, letterSpacing:4
+      }}>01 / 04</div>
+    </AbsoluteFill>
   );
 };
 
-const EmployeeExperience: React.FC<{frame: number}> = ({frame}) => {
-  const opacity = fadeWindow(frame, 66, 176, 12);
-  const local = Math.max(0, frame - 66);
-  const p1 = spring({frame: local, fps: 30, config: {damping: 16, stiffness: 125}});
-  const p2 = spring({frame: Math.max(0, local - 6), fps: 30, config: {damping: 16, stiffness: 125}});
-  const x1 = interpolate(p1, [0, 1], [-155, 0], clamp);
-  const x2 = interpolate(p2, [0, 1], [165, 0], clamp);
+const SceneTwo: React.FC<{frame: number}> = ({frame}) => {
+  const start=52, local=Math.max(0, frame-start);
+  const opacity=sceneOpacity(frame,52,148,8);
+  const employee=spring({frame:local,fps:30,config:{damping:20,stiffness:150,mass:0.72}});
+  const experience=spring({frame:Math.max(0,local-7),fps:30,config:{damping:19,stiffness:145,mass:0.75}});
 
   return (
-    <Center style={{opacity}}>
-      <div style={{width: '100%', textAlign: 'center', fontFamily: 'Arial, Helvetica, sans-serif'}}>
-        <div
-          style={{
-            transform: `translateX(${x1}px)`,
-            fontSize: 112,
-            lineHeight: 0.95,
-            fontWeight: 750,
-            letterSpacing: 4,
-            color: palette.ink,
-          }}
-        >
-          EMPLOYEE
-        </div>
-        <div
-          style={{
-            transform: `translateX(${x2}px)`,
-            marginTop: 18,
-            fontSize: 112,
-            lineHeight: 0.95,
-            fontWeight: 750,
-            letterSpacing: 4,
-            color: palette.sageDeep,
-          }}
-        >
-          EXPERIENCE
-        </div>
-      </div>
-    </Center>
+    <AbsoluteFill style={{opacity, overflow:'hidden'}}>
+      <div style={{
+        position:'absolute', left:78, top:255, color:C.white,
+        fontFamily:'Arial, Helvetica, sans-serif', fontWeight:800, fontSize:126,
+        lineHeight:0.88, letterSpacing:-5,
+        transform:`translateX(${interpolate(employee,[0,1],[210,0],clamp)}px)`,
+        clipPath:`inset(0 0 0 ${interpolate(employee,[0,1],[100,0],clamp)}%)`
+      }}>EMPLOYEE</div>
+
+      <div style={{
+        position:'absolute', left:74, top:392, color:C.cyan,
+        fontFamily:'Arial, Helvetica, sans-serif', fontWeight:800, fontSize:154,
+        lineHeight:0.84, letterSpacing:-7, whiteSpace:'nowrap',
+        transform:`translateX(${interpolate(experience,[0,1],[-250,0],clamp)}px)`,
+        clipPath:`inset(0 ${interpolate(experience,[0,1],[100,0],clamp)}% 0 0)`
+      }}>EXPERIENCE</div>
+
+      <div style={{
+        position:'absolute', left:78, top:600, width:620, color:C.muted,
+        fontFamily:'Arial, Helvetica, sans-serif', fontSize:24, letterSpacing:5
+      }}>DESIGNING BETTER WORK EXPERIENCES</div>
+
+      <div style={{
+        position:'absolute', right:-130, top:170, width:520, height:520,
+        border:`2px solid ${C.cyan}`, borderRadius:'50%', opacity:0.28,
+        transform:`scale(${interpolate(local,[0,55],[0.76,1.05],clamp)})`
+      }}/>
+
+      <div style={{
+        position:'absolute', right:72, bottom:96, color:C.muted,
+        fontFamily:'Arial, Helvetica, sans-serif', fontSize:20, letterSpacing:4
+      }}>02 / 04</div>
+    </AbsoluteFill>
   );
 };
 
-const PeopleDataAI: React.FC<{frame: number}> = ({frame}) => {
-  const opacity = fadeWindow(frame, 158, 282, 12);
-  const local = Math.max(0, frame - 158);
-  const p = spring({frame: local, fps: 30, config: {damping: 18, stiffness: 115}});
-  const scale = interpolate(p, [0, 1], [0.93, 1], clamp);
-
-  const emphasis = (start: number) =>
-    interpolate(frame, [start, start + 10, start + 26], [0.6, 1, 0.78], clamp);
-
+const FlashWord: React.FC<{frame:number; from:number; to:number; word:string; align?:'left'|'right'}> = ({frame,from,to,word,align='left'}) => {
+  const opacity=sceneOpacity(frame,from,to,4);
+  const p=interpolate(frame,[from,from+10],[0,1],clamp);
+  const x=align==='left'?interpolate(p,[0,1],[-180,0],clamp):interpolate(p,[0,1],[180,0],clamp);
   return (
-    <Center style={{opacity}}>
-      <div
-        style={{
-          transform: `scale(${scale})`,
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'center',
-          gap: 26,
-          width: '100%',
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          fontSize: 92,
-          fontWeight: 700,
-          letterSpacing: 3,
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <span style={{color: palette.ink, opacity: emphasis(176)}}>PEOPLE</span>
-        <span style={{color: '#707A73', fontWeight: 400}}>×</span>
-        <span style={{color: palette.sageDeep, opacity: emphasis(202)}}>DATA</span>
-        <span style={{color: '#707A73', fontWeight: 400}}>×</span>
-        <span style={{color: palette.gold, opacity: emphasis(228)}}>AI</span>
-      </div>
-      <div
-        style={{
-          marginTop: 34,
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          fontSize: 31,
-          letterSpacing: 1,
-          color: palette.ink,
-          opacity: 0.62,
-        }}
-      >
-        People insights. Better experiences. Smarter decisions.
-      </div>
-    </Center>
+    <div style={{
+      position:'absolute', left:align==='left'?72:undefined, right:align==='right'?72:undefined,
+      top:270, opacity, transform:`translateX(${x}px)`,
+      fontFamily:'Arial, Helvetica, sans-serif', fontSize:word==='AI'?330:212,
+      lineHeight:0.86, fontWeight:850, letterSpacing:word==='AI'?-16:-10,
+      color:word==='DATA'?C.cyan:C.white
+    }}>{word}</div>
   );
 };
 
-const CompanyReveal: React.FC<{frame: number}> = ({frame}) => {
-  const opacity = fadeWindow(frame, 266, 366, 12);
-  const local = Math.max(0, frame - 266);
-  const enter = spring({frame: local, fps: 30, config: {damping: 20, stiffness: 105}});
-  const y = interpolate(enter, [0, 1], [42, 0], clamp);
+const SceneThree: React.FC<{frame:number}> = ({frame}) => {
+  const opacity=sceneOpacity(frame,132,232,7);
+  const lock=spring({frame:Math.max(0,frame-188),fps:30,config:{damping:18,stiffness:150,mass:0.7}});
 
   return (
-    <Center style={{opacity}}>
-      <div
-        style={{
-          transform: `translateY(${y}px)`,
-          textAlign: 'center',
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          color: palette.ink,
-        }}
-      >
-        <div
-          style={{
-            fontSize: 72,
-            fontWeight: 730,
-            letterSpacing: 1.2,
-          }}
-        >
-          Hamrah Aval (MCI)
-        </div>
-        <div
-          style={{
-            marginTop: 22,
-            fontSize: 41,
-            fontWeight: 500,
-            letterSpacing: 0.8,
-            color: palette.sageDeep,
-          }}
-        >
-          Employee Experience Designer
-        </div>
+    <AbsoluteFill style={{opacity,overflow:'hidden'}}>
+      <FlashWord frame={frame} from={136} to={168} word="PEOPLE" align="left"/>
+      <FlashWord frame={frame} from={160} to={192} word="DATA" align="right"/>
+      <FlashWord frame={frame} from={184} to={210} word="AI" align="left"/>
+
+      <div style={{position:'absolute',left:70,right:70,top:565,height:1,background:'rgba(255,255,255,0.22)'}}/>
+
+      <div style={{
+        position:'absolute', left:70, right:70, top:615, display:'flex',
+        justifyContent:'space-between', alignItems:'center',
+        opacity:interpolate(frame,[192,208],[0,1],clamp),
+        transform:`translateY(${interpolate(lock,[0,1],[30,0],clamp)}px)`,
+        fontFamily:'Arial, Helvetica, sans-serif', fontSize:56, fontWeight:750, letterSpacing:2
+      }}>
+        <span style={{color:C.white}}>PEOPLE</span><span style={{color:C.cyan}}>×</span>
+        <span style={{color:C.white}}>DATA</span><span style={{color:C.cyan}}>×</span>
+        <span style={{color:C.white}}>AI</span>
       </div>
-    </Center>
+
+      <div style={{
+        position:'absolute',left:70,right:70,top:700,height:3,background:C.cyan,
+        transformOrigin:'left', transform:`scaleX(${interpolate(frame,[196,224],[0,1],clamp)})`
+      }}/>
+
+      <div style={{
+        position:'absolute',right:72,bottom:96,color:C.muted,
+        fontFamily:'Arial, Helvetica, sans-serif',fontSize:20,letterSpacing:4
+      }}>03 / 04</div>
+    </AbsoluteFill>
   );
 };
 
-const FinalLogo: React.FC<{frame: number}> = ({frame}) => {
-  const local = Math.max(0, frame - 344);
-  const enter = spring({frame: local, fps: 30, config: {damping: 18, stiffness: 105}});
-  const scale = interpolate(enter, [0, 1], [0.82, 1], clamp);
-  const opacity = interpolate(frame, [344, 362], [0, 1], clamp);
-  const line = interpolate(frame, [366, 404], [0, 520], clamp);
+const SceneFour: React.FC<{frame:number}> = ({frame}) => {
+  const opacity=sceneOpacity(frame,216,298,8);
+  const local=Math.max(0,frame-216);
+  const mk=(d:number)=>spring({frame:Math.max(0,local-d),fps:30,config:{damping:20,stiffness:155,mass:0.72}});
+  const p1=mk(0), p2=mk(6), p3=mk(12);
 
   return (
-    <Center style={{opacity}}>
-      <div
-        style={{
-          transform: `scale(${scale})`,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-          fontFamily: 'Arial, Helvetica, sans-serif',
-        }}
-      >
-        <div
-          style={{
-            padding: '30px 54px',
-            borderRadius: 30,
-            background: 'rgba(255,253,247,0.54)',
-            boxShadow: '0 18px 60px rgba(38,55,45,0.08)',
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          <Img
-            src={staticFile('logo-mci-02.svg')}
-            style={{
-              width: 360,
-              height: 150,
-              objectFit: 'contain',
-              display: 'block',
-            }}
-          />
-        </div>
+    <AbsoluteFill style={{opacity}}>
+      <div style={{
+        position:'absolute',left:78,top:210,color:C.cyan,
+        fontFamily:'Arial, Helvetica, sans-serif',fontSize:24,fontWeight:700,letterSpacing:7
+      }}>THE ROLE</div>
 
-        <div
-          style={{
-            marginTop: 34,
-            fontSize: 42,
-            fontWeight: 650,
-            color: palette.ink,
-            letterSpacing: 0.5,
-          }}
-        >
-          Employee Experience Designer
-        </div>
+      {[
+        ['EMPLOYEE',p1,340,C.white],
+        ['EXPERIENCE',p2,470,C.white],
+        ['DESIGNER',p3,600,C.cyan],
+      ].map(([word,p,top,color])=>(
+        <div key={word as string} style={{
+          position:'absolute',left:72,top:top as number,
+          fontFamily:'Arial, Helvetica, sans-serif',
+          fontSize:word==='EXPERIENCE'?122:145,lineHeight:0.9,fontWeight:850,letterSpacing:-6,
+          color:color as string,
+          transform:`translateX(${interpolate(p as number,[0,1],[180,0],clamp)}px)`,
+          clipPath:`inset(0 0 0 ${interpolate(p as number,[0,1],[100,0],clamp)}%)`
+        }}>{word as string}</div>
+      ))}
 
-        <div
-          style={{
-            width: line,
-            height: 2,
-            marginTop: 27,
-            background: `linear-gradient(90deg, transparent, ${palette.sageDeep}, ${palette.gold}, transparent)`,
-          }}
-        />
+      <div style={{
+        position:'absolute',left:78,bottom:150,
+        width:interpolate(frame,[240,280],[0,620],clamp),height:3,background:C.cyan
+      }}/>
 
-        <div
-          style={{
-            marginTop: 24,
-            fontSize: 31,
-            fontWeight: 650,
-            letterSpacing: 3,
-            color: palette.sageDeep,
-          }}
-        >
-          PEOPLE × DATA × AI
-        </div>
+      <div style={{
+        position:'absolute',right:72,bottom:96,color:C.muted,
+        fontFamily:'Arial, Helvetica, sans-serif',fontSize:20,letterSpacing:4
+      }}>04 / 04</div>
+    </AbsoluteFill>
+  );
+};
+
+const LogoOutro: React.FC<{frame:number}> = ({frame}) => {
+  const start=278, local=Math.max(0,frame-start);
+  const paper=interpolate(local,[28,60],[0,1],clamp);
+  const logoSpring=spring({frame:Math.max(0,local-50),fps:30,config:{damping:18,stiffness:120,mass:0.8}});
+  const logoOpacity=interpolate(local,[52,68],[0,1],clamp);
+  const roleOpacity=interpolate(local,[67,82],[0,1],clamp);
+
+  return (
+    <AbsoluteFill style={{overflow:'hidden'}}>
+      <AbsoluteFill style={{background:C.navy}}/>
+
+      <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
+        {[
+          ['M -120 410 C 180 250, 360 260, 595 390 C 780 492, 930 470, 1190 290',0],
+          ['M -120 470 C 170 320, 375 315, 600 445 C 795 558, 945 525, 1200 350',7],
+          ['M -120 530 C 160 390, 390 370, 610 495 C 810 610, 965 575, 1210 410',14],
+          ['M -120 590 C 155 455, 410 420, 620 545 C 825 668, 985 625, 1220 470',21],
+        ].map(([d,delay],i)=>{
+          const p=interpolate(local,[delay as number,(delay as number)+38],[0,1],clamp);
+          return <path key={i} d={d as string} fill="none"
+            stroke={i===0?C.cyanSoft:C.cyan} strokeWidth={i===0?5:3}
+            opacity={0.95-i*0.13} pathLength={1}
+            strokeDasharray={1} strokeDashoffset={1-p} strokeLinecap="round"/>;
+        })}
+      </svg>
+
+      <div style={{
+        position:'absolute',left:0,right:0,bottom:0,height:`${paper*100}%`,
+        background:C.paper,borderTop:paper>0.01?`4px solid ${C.cyan}`:'none'
+      }}/>
+
+      <div style={{
+        position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',
+        flexDirection:'column',opacity:logoOpacity,
+        transform:`translateY(${interpolate(logoSpring,[0,1],[40,0],clamp)}px) scale(${interpolate(logoSpring,[0,1],[0.92,1],clamp)})`
+      }}>
+        <Img src={staticFile('logo-mci-02.svg')} style={{width:430,height:180,objectFit:'contain'}}/>
+        <div style={{marginTop:44,width:90,height:3,background:C.cyan,opacity:roleOpacity}}/>
+        <div style={{
+          marginTop:24,opacity:roleOpacity,color:C.ink,
+          fontFamily:'Arial, Helvetica, sans-serif',fontSize:30,fontWeight:650,letterSpacing:1.6
+        }}>Employee Experience Designer</div>
       </div>
-    </Center>
+    </AbsoluteFill>
   );
 };
 
 export const MciNewChapter: React.FC = () => {
-  const frame = useCurrentFrame();
-
+  const frame=useCurrentFrame();
   return (
-    <AbsoluteFill>
-      <OrganicBackdrop frame={frame} />
-
-      {frame < 82 ? <NewChapter frame={frame} /> : null}
-      {frame >= 66 && frame < 176 ? <EmployeeExperience frame={frame} /> : null}
-      {frame >= 158 && frame < 282 ? <PeopleDataAI frame={frame} /> : null}
-      {frame >= 266 && frame < 366 ? <CompanyReveal frame={frame} /> : null}
-      {frame >= 344 ? <FinalLogo frame={frame} /> : null}
+    <AbsoluteFill style={{background:C.navy,overflow:'hidden'}}>
+      <Grid frame={frame}/>
+      {frame<68?<SceneOne frame={frame}/>:null}
+      {frame>=52&&frame<148?<SceneTwo frame={frame}/>:null}
+      {frame>=132&&frame<232?<SceneThree frame={frame}/>:null}
+      {frame>=216&&frame<298?<SceneFour frame={frame}/>:null}
+      {frame>=278?<LogoOutro frame={frame}/>:null}
     </AbsoluteFill>
   );
 };
