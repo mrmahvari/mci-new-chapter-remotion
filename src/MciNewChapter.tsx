@@ -297,11 +297,6 @@ const SceneFour: React.FC<{frame: number}> = ({frame}) => {
   const local = Math.max(0, frame - start);
   const opacity = sceneOpacity(frame, 230, 336, 6);
 
-  const tag = spring({
-    frame: Math.max(0, local),
-    fps: 30,
-    config: {damping: 18, stiffness: 150, mass: 0.72},
-  });
   const p1 = spring({
     frame: Math.max(0, local - 6),
     fps: 30,
@@ -320,23 +315,6 @@ const SceneFour: React.FC<{frame: number}> = ({frame}) => {
 
   return (
     <AbsoluteFill style={{opacity}}>
-      <div
-        style={{
-          position: 'absolute',
-          left: 72,
-          top: 188,
-          color: C.cyan,
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          fontSize: 22,
-          fontWeight: 750,
-          letterSpacing: 7,
-          opacity: interpolate(tag, [0, 1], [0, 1], clamp),
-          transform: `translateY(${interpolate(tag, [0, 1], [16, 0], clamp)}px)`,
-        }}
-      >
-        NEW ROLE AT HAMRAH AVAL (MCI)
-      </div>
-
       {[
         ['EMPLOYEE', p1, 310, C.white, 148],
         ['EXPERIENCE', p2, 454, C.white, 132],
