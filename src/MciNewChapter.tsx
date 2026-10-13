@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   AbsoluteFill,
-  Audio,
   Img,
   interpolate,
   spring,
   staticFile,
   useCurrentFrame,
 } from 'remotion';
+import {Audio} from '@remotion/media';
 
 const C = {
   blue0: '#102B40',
