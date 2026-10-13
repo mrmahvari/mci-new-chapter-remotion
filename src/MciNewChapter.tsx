@@ -108,15 +108,15 @@ const SceneTwo: React.FC<{frame:number}> = ({frame}) => {
       }}>EMPLOYEE</div>
       <div style={{
         position:'absolute',left:68,top:405,color:C.cyan,
-        fontFamily:'Arial, Helvetica, sans-serif',fontWeight:900,fontSize:166,
-        letterSpacing:-8,lineHeight:0.82,whiteSpace:'nowrap',
+        fontFamily:'Arial, Helvetica, sans-serif',fontWeight:900,fontSize:148,
+        letterSpacing:-7,lineHeight:0.84,whiteSpace:'nowrap',
         transform:`translateX(${interpolate(p2,[0,1],[-280,0],clamp)}px)`,
         clipPath:`inset(0 ${interpolate(p2,[0,1],[100,0],clamp)}% 0 0)`
       }}>EXPERIENCE</div>
       <div style={{
-        position:'absolute',left:76,top:628,width:740,color:C.muted,
-        fontFamily:'Arial, Helvetica, sans-serif',fontSize:23,fontWeight:600,
-        letterSpacing:5
+        position:'absolute',left:76,right:64,top:620,color:C.muted,
+        fontFamily:'Arial, Helvetica, sans-serif',fontSize:28,fontWeight:650,
+        letterSpacing:3.2,whiteSpace:'nowrap'
       }}>FROM EMPLOYEE VOICE TO BETTER EXPERIENCES</div>
     </AbsoluteFill>
   );
