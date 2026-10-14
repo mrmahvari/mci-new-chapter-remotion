@@ -18,7 +18,6 @@ const C = {
   white: '#F7FBFD',
   muted: '#B7C8D4',
   paper: '#F6F7F4',
-  ink: '#10222D',
 };
 
 const clamp = {
@@ -26,362 +25,198 @@ const clamp = {
   extrapolateRight: 'clamp' as const,
 };
 
-const sceneOpacity = (frame: number, start: number, end: number, fade = 7) =>
+const fadeWindow = (frame:number, start:number, end:number, fade=8) =>
   Math.min(
-    interpolate(frame, [start, start + fade], [0, 1], clamp),
-    interpolate(frame, [end - fade, end], [1, 0], clamp),
+    interpolate(frame,[start,start+fade],[0,1],clamp),
+    interpolate(frame,[end-fade,end],[1,0],clamp)
   );
 
-const Background: React.FC<{frame: number}> = ({frame}) => {
-  const light = interpolate(frame, [0, 292], [0, 1], clamp);
-  const gridOpacity = interpolate(frame, [0, 292], [0.06, 0.02], clamp);
-
+const Background: React.FC<{frame:number}> = ({frame}) => {
+  const light = interpolate(frame,[0,300],[0,1],clamp);
   return (
-    <AbsoluteFill style={{overflow: 'hidden', background: C.blue0}}>
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: `linear-gradient(135deg,
-            ${C.blue0} 0%,
-            ${C.blue1} ${46 - light * 5}%,
-            ${C.blue2} 100%)`,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          inset: -60,
-          opacity: gridOpacity,
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)',
-          backgroundSize: '92px 92px',
-          transform: `translateY(${interpolate(frame, [0, 300], [0, 18], clamp)}px)`,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          left: 54,
-          top: 0,
-          bottom: 0,
-          width: 2,
-          background: C.cyan,
-          opacity: 0.64,
-          transform: `scaleY(${interpolate(frame, [0, 20], [0, 1], clamp)})`,
-          transformOrigin: 'top',
-        }}
-      />
+    <AbsoluteFill style={{overflow:'hidden',background:C.blue0}}>
+      <div style={{
+        position:'absolute',inset:0,
+        background:`linear-gradient(135deg, ${C.blue0} 0%, ${C.blue1} ${46-light*5}%, ${C.blue2} 100%)`
+      }}/>
+      <div style={{
+        position:'absolute',inset:-60,opacity:0.035,
+        backgroundImage:'linear-gradient(rgba(255,255,255,.25) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px)',
+        backgroundSize:'92px 92px',
+        transform:`translateY(${interpolate(frame,[0,300],[0,16],clamp)}px)`
+      }}/>
+      <div style={{
+        position:'absolute',left:54,top:0,bottom:0,width:2,
+        background:C.cyan,opacity:.62,
+        transform:`scaleY(${interpolate(frame,[0,20],[0,1],clamp)})`,
+        transformOrigin:'top'
+      }}/>
     </AbsoluteFill>
   );
 };
 
-const SceneOne: React.FC<{frame: number}> = ({frame}) => {
-  const opacity = sceneOpacity(frame, 0, 68, 6);
-  const p = spring({
-    frame,
-    fps: 30,
-    config: {damping: 19, stiffness: 165, mass: 0.72},
-  });
-  const p2 = spring({
-    frame: Math.max(0, frame - 7),
-    fps: 30,
-    config: {damping: 18, stiffness: 155, mass: 0.75},
-  });
-
+const NewChapter: React.FC<{frame:number}> = ({frame}) => {
+  const opacity=fadeWindow(frame,0,70,7);
+  const p=spring({frame,fps:30,config:{damping:19,stiffness:165,mass:.72}});
+  const p2=spring({frame:Math.max(0,frame-7),fps:30,config:{damping:18,stiffness:155,mass:.75}});
   return (
     <AbsoluteFill style={{opacity}}>
-      <div
-        style={{
-          position: 'absolute',
-          left: 84,
-          top: 194,
-          color: C.cyan,
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          fontWeight: 750,
-          fontSize: 46,
-          letterSpacing: 11,
-          transform: `translateY(${interpolate(p, [0, 1], [44, 0], clamp)}px)`,
-          clipPath: `inset(${interpolate(p, [0, 1], [100, 0], clamp)}% 0 0 0)`,
-        }}
-      >
-        A NEW
-      </div>
-
-      <div
-        style={{
-          position: 'absolute',
-          left: 70,
-          top: 330,
-          width: 1200,
-          color: C.white,
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          fontWeight: 900,
-          fontSize: 184,
-          letterSpacing: -10,
-          lineHeight: 0.84,
-          whiteSpace: 'nowrap',
-          transform: `translateX(${interpolate(p2, [0, 1], [-155, 0], clamp)}px)`,
-          clipPath: `inset(0 ${interpolate(p2, [0, 1], [100, 0], clamp)}% 0 0)`,
-        }}
-      >
-        CHAPTER
-      </div>
-
-      <div
-        style={{
-          position: 'absolute',
-          left: 84,
-          top: 568,
-          height: 4,
-          width: interpolate(frame, [13, 38], [0, 735], clamp),
-          background: C.cyan,
-        }}
-      />
+      <div style={{
+        position:'absolute',left:84,top:194,color:C.cyan,
+        fontFamily:'Arial,Helvetica,sans-serif',fontWeight:750,fontSize:46,letterSpacing:11,
+        transform:`translateY(${interpolate(p,[0,1],[44,0],clamp)}px)`,
+        clipPath:`inset(${interpolate(p,[0,1],[100,0],clamp)}% 0 0 0)`
+      }}>A NEW</div>
+      <div style={{
+        position:'absolute',left:70,top:330,width:1200,color:C.white,
+        fontFamily:'Arial,Helvetica,sans-serif',fontWeight:900,fontSize:184,letterSpacing:-10,lineHeight:.84,
+        whiteSpace:'nowrap',
+        transform:`translateX(${interpolate(p2,[0,1],[-155,0],clamp)}px)`,
+        clipPath:`inset(0 ${interpolate(p2,[0,1],[100,0],clamp)}% 0 0)`
+      }}>CHAPTER</div>
+      <div style={{
+        position:'absolute',left:84,top:568,height:4,
+        width:interpolate(frame,[13,38],[0,735],clamp),background:C.cyan
+      }}/>
     </AbsoluteFill>
   );
 };
 
-const BigWord: React.FC<{
-  frame: number;
-  from: number;
-  to: number;
-  word: string;
-  color: string;
-  align: 'left' | 'right';
-}> = ({frame, from, to, word, color, align}) => {
-  const opacity = sceneOpacity(frame, from, to, 3);
-  const p = interpolate(frame, [from, from + 8], [0, 1], clamp);
-  const x =
-    align === 'left'
-      ? interpolate(p, [0, 1], [-160, 0], clamp)
-      : interpolate(p, [0, 1], [160, 0], clamp);
-
+const BigWord: React.FC<{frame:number;from:number;to:number;word:string;color:string;align:'left'|'right'}> =
+({frame,from,to,word,color,align}) => {
+  const opacity=fadeWindow(frame,from,to,3);
+  const p=interpolate(frame,[from,from+8],[0,1],clamp);
+  const x=align==='left'?interpolate(p,[0,1],[-160,0],clamp):interpolate(p,[0,1],[160,0],clamp);
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 286,
-        left: align === 'left' ? 64 : undefined,
-        right: align === 'right' ? 64 : undefined,
-        color,
-        opacity,
-        transform: `translateX(${x}px)`,
-        fontFamily: 'Arial, Helvetica, sans-serif',
-        fontWeight: 900,
-        fontSize: word === 'AI' ? 292 : 188,
-        letterSpacing: word === 'AI' ? -14 : -10,
-        lineHeight: 0.85,
-      }}
-    >
-      {word}
-    </div>
+    <div style={{
+      position:'absolute',top:286,left:align==='left'?64:undefined,right:align==='right'?64:undefined,
+      color,opacity,transform:`translateX(${x}px)`,
+      fontFamily:'Arial,Helvetica,sans-serif',fontWeight:900,
+      fontSize:word==='AI'?292:188,letterSpacing:word==='AI'?-14:-10,lineHeight:.85
+    }}>{word}</div>
   );
 };
 
-const PeopleDataAI: React.FC<{frame: number}> = ({frame}) => {
-  const opacity = sceneOpacity(frame, 54, 205, 7);
-  const lock = spring({
-    frame: Math.max(0, frame - 150),
-    fps: 30,
-    config: {damping: 20, stiffness: 160, mass: 0.68},
-  });
+const PeopleDataAI: React.FC<{frame:number}> = ({frame}) => {
+  const opacity=fadeWindow(frame,52,204,7);
+  const lock=spring({frame:Math.max(0,frame-150),fps:30,config:{damping:20,stiffness:160,mass:.68}});
+  // Smooth handoff: after lock-up, the whole lock gently lifts and dims rather than vanishing abruptly.
+  const handoff = interpolate(frame,[184,204],[0,1],clamp);
+  const y = interpolate(handoff,[0,1],[0,-28],clamp);
 
   return (
-    <AbsoluteFill style={{opacity, overflow: 'hidden'}}>
-      <BigWord frame={frame} from={64} to={101} word="PEOPLE" color={C.white} align="left" />
-      <BigWord frame={frame} from={92} to={129} word="DATA" color={C.cyan} align="right" />
-      <BigWord frame={frame} from={120} to={153} word="AI" color={C.white} align="left" />
+    <AbsoluteFill style={{opacity,overflow:'hidden',transform:`translateY(${y}px)`}}>
+      <BigWord frame={frame} from={64} to={101} word="PEOPLE" color={C.white} align="left"/>
+      <BigWord frame={frame} from={92} to={129} word="DATA" color={C.cyan} align="right"/>
+      <BigWord frame={frame} from={120} to={153} word="AI" color={C.white} align="left"/>
 
-      <div
-        style={{
-          position: 'absolute',
-          left: 66,
-          right: 66,
-          top: 640,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          opacity: interpolate(frame, [154, 169], [0, 1], clamp),
-          transform: `translateY(${interpolate(lock, [0, 1], [22, 0], clamp)}px)`,
-          fontFamily: 'Arial, Helvetica, sans-serif',
-          fontWeight: 800,
-          fontSize: 50,
-          letterSpacing: 1.2,
-        }}
-      >
-        <span style={{color: C.white}}>PEOPLE</span>
-        <span style={{color: C.cyan}}>×</span>
-        <span style={{color: C.white}}>DATA</span>
-        <span style={{color: C.cyan}}>×</span>
-        <span style={{color: C.white}}>AI</span>
+      <div style={{
+        position:'absolute',left:66,right:66,top:640,
+        display:'flex',justifyContent:'space-between',alignItems:'center',
+        opacity:interpolate(frame,[154,169],[0,1],clamp),
+        transform:`translateY(${interpolate(lock,[0,1],[22,0],clamp)}px)`,
+        fontFamily:'Arial,Helvetica,sans-serif',fontWeight:800,fontSize:50,letterSpacing:1.2
+      }}>
+        <span style={{color:C.white}}>PEOPLE</span>
+        <span style={{color:C.cyan}}>×</span>
+        <span style={{color:C.white}}>DATA</span>
+        <span style={{color:C.cyan}}>×</span>
+        <span style={{color:C.white}}>AI</span>
       </div>
-
-      <div
-        style={{
-          position: 'absolute',
-          left: 66,
-          right: 66,
-          top: 714,
-          height: 3,
-          background: C.cyan,
-          opacity: 0.9,
-          transformOrigin: 'left',
-          transform: `scaleX(${interpolate(frame, [160, 178], [0, 1], clamp)})`,
-        }}
-      />
+      <div style={{
+        position:'absolute',left:66,right:66,top:714,height:3,background:C.cyan,opacity:.9,
+        transformOrigin:'left',transform:`scaleX(${interpolate(frame,[160,178],[0,1],clamp)})`
+      }}/>
     </AbsoluteFill>
   );
 };
 
-const RoleReveal: React.FC<{frame: number}> = ({frame}) => {
-  const start = 195;
-  const local = Math.max(0, frame - start);
-  const opacity = sceneOpacity(frame, 195, 320, 7);
+const RoleReveal: React.FC<{frame:number}> = ({frame}) => {
+  const start=190;
+  const local=Math.max(0,frame-start);
+  const opacity=fadeWindow(frame,190,320,8);
 
-  const p1 = spring({
-    frame: Math.max(0, local - 6),
-    fps: 30,
-    config: {damping: 18, stiffness: 165, mass: 0.68},
-  });
-  const p2 = spring({
-    frame: Math.max(0, local - 13),
-    fps: 30,
-    config: {damping: 18, stiffness: 160, mass: 0.7},
-  });
-  const p3 = spring({
-    frame: Math.max(0, local - 21),
-    fps: 30,
-    config: {damping: 17, stiffness: 170, mass: 0.72},
-  });
+  // The role doesn't "sit" suddenly; it rises from the same visual flow as the previous lock-up.
+  const sceneLift=spring({frame:local,fps:30,config:{damping:22,stiffness:125,mass:.85}});
+  const sceneY=interpolate(sceneLift,[0,1],[46,0],clamp);
+
+  const p1=spring({frame:Math.max(0,local-5),fps:30,config:{damping:19,stiffness:155,mass:.72}});
+  const p2=spring({frame:Math.max(0,local-12),fps:30,config:{damping:18,stiffness:158,mass:.71}});
+  const p3=spring({frame:Math.max(0,local-20),fps:30,config:{damping:17,stiffness:166,mass:.72}});
 
   return (
-    <AbsoluteFill style={{opacity}}>
+    <AbsoluteFill style={{opacity,transform:`translateY(${sceneY}px)`}}>
       {[
-        ['EMPLOYEE', p1, 310, C.white, 148],
-        ['EXPERIENCE', p2, 454, C.white, 132],
-        ['DESIGNER', p3, 600, C.cyan, 166],
-      ].map(([word, p, top, color, size]) => (
-        <div
-          key={word as string}
-          style={{
-            position: 'absolute',
-            left: 66,
-            top: top as number,
-            color: color as string,
-            fontFamily: 'Arial, Helvetica, sans-serif',
-            fontSize: size as number,
-            fontWeight: 900,
-            letterSpacing: -7,
-            lineHeight: 0.86,
-            transform: `translateX(${interpolate(p as number, [0, 1], [185, 0], clamp)}px)`,
-            clipPath: `inset(0 0 0 ${interpolate(p as number, [0, 1], [100, 0], clamp)}%)`,
-          }}
-        >
-          {word as string}
-        </div>
+        ['EMPLOYEE',p1,312,C.white,148],
+        ['EXPERIENCE',p2,456,C.white,132],
+        ['DESIGNER',p3,602,C.cyan,166],
+      ].map(([word,p,top,color,size])=>(
+        <div key={word as string} style={{
+          position:'absolute',left:66,top:top as number,color:color as string,
+          fontFamily:'Arial,Helvetica,sans-serif',fontSize:size as number,
+          fontWeight:900,letterSpacing:-7,lineHeight:.86,
+          transform:`translateX(${interpolate(p as number,[0,1],[160,0],clamp)}px)`,
+          clipPath:`inset(0 0 0 ${interpolate(p as number,[0,1],[100,0],clamp)}%)`
+        }}>{word as string}</div>
       ))}
-
-      <div
-        style={{
-          position: 'absolute',
-          left: 68,
-          bottom: 150,
-          height: 4,
-          width: interpolate(frame, [226, 266], [0, 700], clamp),
-          background: C.cyan,
-          opacity: 0.92,
-        }}
-      />
+      <div style={{
+        position:'absolute',left:68,bottom:150,height:4,
+        width:interpolate(frame,[220,262],[0,700],clamp),
+        background:C.cyan,opacity:.92
+      }}/>
     </AbsoluteFill>
   );
 };
 
-const LogoOutro: React.FC<{frame: number}> = ({frame}) => {
-  const start = 296;
-  const local = Math.max(0, frame - start);
-  const wipe = interpolate(local, [18, 55], [0, 1], clamp);
-  const logo = spring({
-    frame: Math.max(0, local - 45),
-    fps: 30,
-    config: {damping: 18, stiffness: 118, mass: 0.8},
-  });
-  const logoOpacity = interpolate(local, [47, 64], [0, 1], clamp);
+const LogoOutro: React.FC<{frame:number}> = ({frame}) => {
+  const start=294;
+  const local=Math.max(0,frame-start);
+  const wipe=interpolate(local,[18,55],[0,1],clamp);
+  const logo=spring({frame:Math.max(0,local-45),fps:30,config:{damping:18,stiffness:118,mass:.8}});
+  const logoOpacity=interpolate(local,[47,64],[0,1],clamp);
 
   return (
-    <AbsoluteFill style={{overflow: 'hidden'}}>
-      <AbsoluteFill style={{background: C.blue1}} />
-
-      <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position: 'absolute', inset: 0}}>
+    <AbsoluteFill style={{overflow:'hidden'}}>
+      <AbsoluteFill style={{background:C.blue1}}/>
+      <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
         {[
-          ['M -120 410 C 190 230, 365 270, 590 390 C 790 495, 940 460, 1200 275', 0],
-          ['M -120 475 C 170 315, 380 325, 605 450 C 805 560, 955 520, 1200 345', 6],
-          ['M -120 540 C 160 390, 395 385, 620 505 C 825 615, 980 570, 1210 420', 12],
-        ].map(([d, delay], i) => {
-          const p = interpolate(local, [delay as number, (delay as number) + 34], [0, 1], clamp);
-          return (
-            <path
-              key={i}
-              d={d as string}
-              fill="none"
-              stroke={i === 0 ? C.cyanSoft : C.cyan}
-              strokeWidth={i === 0 ? 5 : 3}
-              opacity={0.9 - i * 0.14}
-              pathLength={1}
-              strokeDasharray={1}
-              strokeDashoffset={1 - p}
-              strokeLinecap="round"
-            />
-          );
+          ['M -120 410 C 190 230, 365 270, 590 390 C 790 495, 940 460, 1200 275',0],
+          ['M -120 475 C 170 315, 380 325, 605 450 C 805 560, 955 520, 1200 345',6],
+          ['M -120 540 C 160 390, 395 385, 620 505 C 825 615, 980 570, 1210 420',12],
+        ].map(([d,delay],i)=>{
+          const p=interpolate(local,[delay as number,(delay as number)+34],[0,1],clamp);
+          return <path key={i} d={d as string} fill="none"
+            stroke={i===0?C.cyanSoft:C.cyan} strokeWidth={i===0?5:3}
+            opacity={.9-i*.14} pathLength={1} strokeDasharray={1}
+            strokeDashoffset={1-p} strokeLinecap="round"/>;
         })}
       </svg>
-
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: `${wipe * 100}%`,
-          background: C.paper,
-          borderTop: wipe > 0.01 ? `3px solid ${C.cyan}` : 'none',
-        }}
-      />
-
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          opacity: logoOpacity,
-          transform: `translateY(${interpolate(logo, [0, 1], [34, 0], clamp)}px) scale(${interpolate(
-            logo,
-            [0, 1],
-            [0.95, 1],
-            clamp
-          )})`,
-        }}
-      >
-        <Img src={staticFile('logo-mci-02.svg')} style={{width: 450, height: 182, objectFit: 'contain'}} />
+      <div style={{
+        position:'absolute',left:0,right:0,bottom:0,height:`${wipe*100}%`,
+        background:C.paper,borderTop:wipe>.01?`3px solid ${C.cyan}`:'none'
+      }}/>
+      <div style={{
+        position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',
+        opacity:logoOpacity,
+        transform:`translateY(${interpolate(logo,[0,1],[34,0],clamp)}px) scale(${interpolate(logo,[0,1],[.95,1],clamp)})`
+      }}>
+        <Img src={staticFile('logo-mci-02.svg')} style={{width:450,height:182,objectFit:'contain'}}/>
       </div>
     </AbsoluteFill>
   );
 };
 
 export const MciNewChapter: React.FC = () => {
-  const frame = useCurrentFrame();
+  const frame=useCurrentFrame();
 
   return (
-    <AbsoluteFill style={{background: C.blue0, overflow: 'hidden'}}>
-      <Audio src={staticFile('mci-new-chapter-sound.wav')} volume={1} />
-      <Background frame={frame} />
-      {frame < 68 ? <SceneOne frame={frame} /> : null}
-      {frame >= 54 && frame < 205 ? <PeopleDataAI frame={frame} /> : null}
-      {frame >= 195 && frame < 320 ? <RoleReveal frame={frame} /> : null}
-      {frame >= 296 ? <LogoOutro frame={frame} /> : null}
+    <AbsoluteFill style={{background:C.blue0,overflow:'hidden'}}>
+      <Audio src={staticFile('mci-new-chapter-sound.wav')} volume={1}/>
+      <Background frame={frame}/>
+      {frame<70?<NewChapter frame={frame}/>:null}
+      {frame>=52&&frame<204?<PeopleDataAI frame={frame}/>:null}
+      {frame>=190&&frame<320?<RoleReveal frame={frame}/>:null}
+      {frame>=294?<LogoOutro frame={frame}/>:null}
     </AbsoluteFill>
   );
 };
