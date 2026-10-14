@@ -33,7 +33,7 @@ const fadeWindow = (frame:number, start:number, end:number, fade=8) =>
   );
 
 const BlueprintBackground: React.FC<{frame:number}> = ({frame}) => {
-  const drift = interpolate(frame,[0,390],[0,20],clamp);
+  const drift = interpolate(frame,[0,390],[0,18],clamp);
   return (
     <AbsoluteFill style={{background:C.navy,overflow:'hidden'}}>
       <div style={{
@@ -42,15 +42,15 @@ const BlueprintBackground: React.FC<{frame:number}> = ({frame}) => {
       }}/>
       <div style={{
         position:'absolute',inset:-80,
-        opacity:.035,
+        opacity:.028,
         backgroundImage:
-          'linear-gradient(rgba(255,255,255,.30) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,.30) 1px,transparent 1px)',
+          'linear-gradient(rgba(255,255,255,.26) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,.26) 1px,transparent 1px)',
         backgroundSize:'86px 86px',
         transform:`translateY(${drift}px)`
       }}/>
       <div style={{
         position:'absolute',left:54,top:0,bottom:0,width:2,
-        background:C.cyan,opacity:.55
+        background:C.cyan,opacity:.52
       }}/>
     </AbsoluteFill>
   );
@@ -86,43 +86,53 @@ const WriteText: React.FC<{
   fontSize:number;
   color?:string;
   letterSpacing?:number;
-  width?:number;
+  boxWidth?:number;
+  revealPadding?:number;
   fontWeight?:number;
 }> = ({
-  frame,start,text,left,top,fontSize,color=C.white,letterSpacing=0,width=900,fontWeight=900
+  frame,start,text,left,top,fontSize,color=C.white,letterSpacing=0,
+  boxWidth=980,revealPadding=90,fontWeight=900
 }) => {
   const p = interpolate(frame,[start,start+18],[0,1],clamp);
-  const outlineOpacity = interpolate(frame,[start-4,start+4,start+24],[0,.40,.12],clamp);
+  const outlineOpacity = interpolate(frame,[start-4,start+4,start+24],[0,.28,.07],clamp);
   const fillOpacity = interpolate(frame,[start,start+5],[0,1],clamp);
-  const pencilX = left + width * p;
+  const revealWidth = boxWidth + revealPadding;
+
   return (
     <>
+      {/* Ghost construction outline. Wide enough that the final glyph can never be clipped. */}
       <div style={{
-        position:'absolute',left,top,width,
+        position:'absolute',left,top,width:revealWidth,
         fontFamily:'Arial,Helvetica,sans-serif',
         fontSize,fontWeight,letterSpacing,lineHeight:.88,
         color:'transparent',
-        WebkitTextStroke:`2px rgba(214,225,231,${outlineOpacity})`,
-        whiteSpace:'nowrap'
+        WebkitTextStroke:`1.5px rgba(214,225,231,${outlineOpacity})`,
+        whiteSpace:'nowrap',
+        overflow:'visible',
       }}>{text}</div>
 
+      {/* Fill reveal uses a generously padded box to prevent CHAPTER / DESIGNER clipping. */}
       <div style={{
-        position:'absolute',left,top,width,
+        position:'absolute',left,top,width:revealWidth,
         fontFamily:'Arial,Helvetica,sans-serif',
         fontSize,fontWeight,letterSpacing,lineHeight:.88,
         color,whiteSpace:'nowrap',
         opacity:fillOpacity,
-        clipPath:`inset(0 ${100-p*100}% 0 0)`
+        clipPath:`inset(0 ${100-p*100}% 0 0)`,
+        overflow:'visible',
       }}>{text}</div>
 
+      {/* Stylus cursor, visually subtle. */}
       {frame >= start-2 && frame <= start+20 ? (
         <div style={{
           position:'absolute',
-          left:pencilX-2,top:top-7,
-          width:3,height:fontSize*.98,
-          background:'rgba(214,225,231,.60)',
+          left:left + (boxWidth-8)*p,
+          top:top-5,
+          width:2.5,
+          height:fontSize*.96,
+          background:'rgba(214,225,231,.46)',
           transform:'rotate(2deg)',
-          opacity:interpolate(frame,[start-2,start+3,start+19,start+21],[0,.9,.7,0],clamp)
+          opacity:interpolate(frame,[start-2,start+3,start+19,start+21],[0,.72,.55,0],clamp)
         }}/>
       ):null}
     </>
@@ -133,6 +143,7 @@ const NewChapter: React.FC<{frame:number}> = ({frame}) => {
   const opacity = fadeWindow(frame,0,72,7);
   const lineP = interpolate(frame,[8,38],[0,1],clamp);
   const aNew = interpolate(frame,[4,19],[0,1],clamp);
+
   return (
     <AbsoluteFill style={{opacity}}>
       <div style={{
@@ -151,7 +162,8 @@ const NewChapter: React.FC<{frame:number}> = ({frame}) => {
         left={72}
         top={330}
         fontSize={184}
-        width={900}
+        boxWidth={940}
+        revealPadding={120}
         letterSpacing={-10}
       />
 
@@ -162,72 +174,89 @@ const NewChapter: React.FC<{frame:number}> = ({frame}) => {
   );
 };
 
+const RevealWord: React.FC<{
+  frame:number;
+  start:number;
+  text:string;
+  color?:string;
+}> = ({frame,start,text,color=C.white}) => {
+  const p = interpolate(frame,[start,start+18],[0,1],clamp);
+  return (
+    <div style={{
+      position:'relative',
+      width:'100%',
+      fontFamily:'Arial,Helvetica,sans-serif',
+      fontWeight:900,
+      fontSize:72,
+      letterSpacing:-2.8,
+      lineHeight:1,
+      color,
+      whiteSpace:'nowrap',
+      overflow:'hidden'
+    }}>
+      <div style={{
+        clipPath:`inset(0 ${100-p*100}% 0 0)`
+      }}>{text}</div>
+    </div>
+  );
+};
+
 const PeopleDataAI: React.FC<{frame:number}> = ({frame}) => {
   const opacity = fadeWindow(frame,58,202,8);
+
   const pPeople = interpolate(frame,[68,89],[0,1],clamp);
   const pData = interpolate(frame,[96,117],[0,1],clamp);
   const pAI = interpolate(frame,[124,145],[0,1],clamp);
   const lock = interpolate(frame,[150,174],[0,1],clamp);
-  const holdLift = interpolate(frame,[184,202],[0,1],clamp);
+  const handoff = interpolate(frame,[184,202],[0,1],clamp);
 
   return (
     <AbsoluteFill style={{
       opacity,
-      transform:`translateY(${interpolate(holdLift,[0,1],[0,-24],clamp)}px)`
+      transform:`translateY(${interpolate(handoff,[0,1],[0,-22],clamp)}px)`
     }}>
-      {/* Subtle construction guides */}
+      {/* Clean, fixed-grid layout: stable baseline and balanced spacing. */}
+      <div style={{
+        position:'absolute',
+        left:70,right:70,top:418,
+        display:'grid',
+        gridTemplateColumns:'2.15fr .34fr 1.55fr .34fr .68fr',
+        columnGap:22,
+        alignItems:'center'
+      }}>
+        <RevealWord frame={frame} start={68} text="PEOPLE"/>
+        <div style={{
+          fontFamily:'Arial,Helvetica,sans-serif',
+          fontSize:50,fontWeight:850,color:C.cyan,textAlign:'center',
+          opacity:interpolate(frame,[84,94],[0,1],clamp)
+        }}>×</div>
+        <RevealWord frame={frame} start={96} text="DATA"/>
+        <div style={{
+          fontFamily:'Arial,Helvetica,sans-serif',
+          fontSize:50,fontWeight:850,color:C.cyan,textAlign:'center',
+          opacity:interpolate(frame,[112,122],[0,1],clamp)
+        }}>×</div>
+        <RevealWord frame={frame} start={124} text="AI"/>
+      </div>
+
+      {/* Individual construction rules, aligned to the text grid. */}
       <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
-        <DrawPath d="M 75 520 L 375 520" progress={pPeople} stroke={C.graphite} width={2} opacity={.38}/>
-        <DrawPath d="M 390 520 L 680 520" progress={pData} stroke={C.graphite} width={2} opacity={.38}/>
-        <DrawPath d="M 705 520 L 1000 520" progress={pAI} stroke={C.graphite} width={2} opacity={.38}/>
+        <DrawPath d="M 72 520 L 337 520" progress={pPeople} stroke={C.graphite} width={2} opacity={.32}/>
+        <DrawPath d="M 411 520 L 650 520" progress={pData} stroke={C.graphite} width={2} opacity={.32}/>
+        <DrawPath d="M 808 520 L 1005 520" progress={pAI} stroke={C.graphite} width={2} opacity={.32}/>
+
+        {/* Final unified lock-up line */}
+        <DrawPath d="M 72 552 L 1005 552" progress={lock} width={3}/>
       </svg>
 
-      <div style={{
-        position:'absolute',left:62,top:435,
-        fontFamily:'Arial,Helvetica,sans-serif',fontWeight:900,fontSize:78,
-        color:C.white,letterSpacing:-3,
-        clipPath:`inset(0 ${100-pPeople*100}% 0 0)`
-      }}>PEOPLE</div>
-
-      <div style={{
-        position:'absolute',left:410,top:435,
-        fontFamily:'Arial,Helvetica,sans-serif',fontWeight:900,fontSize:78,
-        color:C.white,letterSpacing:-3,
-        clipPath:`inset(0 ${100-pData*100}% 0 0)`
-      }}>DATA</div>
-
-      <div style={{
-        position:'absolute',right:75,top:435,
-        fontFamily:'Arial,Helvetica,sans-serif',fontWeight:900,fontSize:78,
-        color:C.white,letterSpacing:-3,
-        clipPath:`inset(0 ${100-pAI*100}% 0 0)`
-      }}>AI</div>
-
-      <div style={{
-        position:'absolute',left:327,top:440,
-        fontFamily:'Arial,Helvetica,sans-serif',fontSize:54,fontWeight:800,
-        color:C.cyan,opacity:interpolate(frame,[84,94],[0,1],clamp)
-      }}>×</div>
-      <div style={{
-        position:'absolute',left:660,top:440,
-        fontFamily:'Arial,Helvetica,sans-serif',fontSize:54,fontWeight:800,
-        color:C.cyan,opacity:interpolate(frame,[112,122],[0,1],clamp)
-      }}>×</div>
-
-      {/* Final lock-up line */}
-      <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
-        <DrawPath d="M 66 548 L 1010 548" progress={lock} width={3}/>
-      </svg>
-
-      {/* Tiny endpoint / pencil cursor */}
       {frame >= 150 && frame <= 176 ? (
         <div style={{
           position:'absolute',
-          left:66 + (1010-66)*lock - 5,
-          top:541,
+          left:72 + (1005-72)*lock - 5,
+          top:545,
           width:10,height:10,borderRadius:999,
           background:C.graphite,
-          opacity:interpolate(frame,[150,155,173,177],[0,.75,.70,0],clamp)
+          opacity:interpolate(frame,[150,155,173,177],[0,.60,.52,0],clamp)
         }}/>
       ):null}
     </AbsoluteFill>
@@ -235,15 +264,44 @@ const PeopleDataAI: React.FC<{frame:number}> = ({frame}) => {
 };
 
 const Convergence: React.FC<{frame:number}> = ({frame}) => {
-  const opacity = interpolate(frame,[176,190,216,226],[0,1,1,0],clamp);
-  const p = interpolate(frame,[180,216],[0,1],clamp);
+  const opacity = interpolate(frame,[176,190,220,228],[0,1,1,0],clamp);
+  const p1 = interpolate(frame,[180,207],[0,1],clamp);
+  const p2 = interpolate(frame,[187,214],[0,1],clamp);
+  const axis = interpolate(frame,[202,224],[0,1],clamp);
+  const ring = interpolate(frame,[207,220],[0,1],clamp);
+
   return (
     <AbsoluteFill style={{opacity}}>
       <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
-        <DrawPath d="M 220 548 C 315 625, 405 675, 520 728" progress={p} stroke={C.graphite} width={2.5} opacity={.65}/>
-        <DrawPath d="M 540 548 L 540 728" progress={p} stroke={C.cyanSoft} width={3} opacity={.75}/>
-        <DrawPath d="M 865 548 C 770 625, 675 675, 560 728" progress={p} stroke={C.graphite} width={2.5} opacity={.65}/>
-        <circle cx="540" cy="730" r={interpolate(p,[0,1],[0,9],clamp)} fill={C.cyan}/>
+        {/* Three deliberate, symmetrical input paths */}
+        <DrawPath d="M 206 554 C 295 607, 382 646, 505 690" progress={p1} stroke={C.graphite} width={2.5} opacity={.52}/>
+        <DrawPath d="M 540 554 C 540 600, 540 646, 540 690" progress={p1} stroke={C.cyanSoft} width={3} opacity={.76}/>
+        <DrawPath d="M 875 554 C 786 607, 698 646, 575 690" progress={p1} stroke={C.graphite} width={2.5} opacity={.52}/>
+
+        {/* Merge into a single constructed spine */}
+        <DrawPath d="M 505 690 Q 540 713 575 690" progress={p2} stroke={C.cyan} width={3.5} opacity={.92}/>
+        <DrawPath d="M 540 710 L 540 776" progress={p2} stroke={C.cyan} width={3.5} opacity={.92}/>
+
+        {/* The convergence resolves into a horizontal construction axis for the role scene */}
+        <DrawPath d="M 420 790 L 660 790" progress={axis} stroke={C.cyanSoft} width={2.5} opacity={.72}/>
+
+        {/* Blueprint node, cleaner than the previous simple dot */}
+        <circle
+          cx="540"
+          cy="710"
+          r={interpolate(ring,[0,1],[0,15],clamp)}
+          fill="none"
+          stroke={C.cyan}
+          strokeWidth="2"
+          opacity={interpolate(ring,[0,1],[0,.82],clamp)}
+        />
+        <circle
+          cx="540"
+          cy="710"
+          r={interpolate(ring,[0,1],[0,4.5],clamp)}
+          fill={C.cyan}
+          opacity={interpolate(ring,[0,1],[0,.92],clamp)}
+        />
       </svg>
     </AbsoluteFill>
   );
@@ -260,24 +318,47 @@ const RoleReveal: React.FC<{frame:number}> = ({frame}) => {
     config:{damping:21,stiffness:115,mass:.90}
   });
 
-  const stageY = interpolate(stage,[0,1],[42,0],clamp);
-  const glow = interpolate(frame,[234,264,290],[0,.10,.04],clamp);
+  const stageY = interpolate(stage,[0,1],[38,0],clamp);
 
   return (
     <AbsoluteFill style={{
       opacity,
       transform:`translateY(${stageY}px)`
     }}>
-      <div style={{
-        position:'absolute',left:58,top:260,
-        width:925,height:520,
-        border:`1px solid rgba(120,199,227,${glow})`,
-        opacity:glow>0?1:0
-      }}/>
-
-      <WriteText frame={frame} start={210} text="EMPLOYEE" left={66} top={315} fontSize={148} width={860} letterSpacing={-7}/>
-      <WriteText frame={frame} start={226} text="EXPERIENCE" left={66} top={458} fontSize={132} width={930} letterSpacing={-7}/>
-      <WriteText frame={frame} start={246} text="DESIGNER" left={66} top={606} fontSize={166} width={880} color={C.cyan} letterSpacing={-7}/>
+      <WriteText
+        frame={frame}
+        start={210}
+        text="EMPLOYEE"
+        left={66}
+        top={315}
+        fontSize={148}
+        boxWidth={900}
+        revealPadding={100}
+        letterSpacing={-7}
+      />
+      <WriteText
+        frame={frame}
+        start={226}
+        text="EXPERIENCE"
+        left={66}
+        top={458}
+        fontSize={132}
+        boxWidth={950}
+        revealPadding={110}
+        letterSpacing={-7}
+      />
+      <WriteText
+        frame={frame}
+        start={246}
+        text="DESIGNER"
+        left={66}
+        top={606}
+        fontSize={166}
+        boxWidth={965}
+        revealPadding={120}
+        color={C.cyan}
+        letterSpacing={-7}
+      />
 
       <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
         <DrawPath
@@ -306,10 +387,20 @@ const LogoOutro: React.FC<{frame:number}> = ({frame}) => {
       <AbsoluteFill style={{background:C.navy2}}/>
 
       <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
-        <DrawPath d="M -60 400 C 230 270, 420 320, 610 420 C 815 528, 970 475, 1150 350"
-          progress={interpolate(local,[0,30],[0,1],clamp)} stroke={C.cyanSoft} width={4} opacity={.78}/>
-        <DrawPath d="M -60 470 C 220 350, 430 375, 625 470 C 815 565, 985 530, 1160 410"
-          progress={interpolate(local,[7,37],[0,1],clamp)} stroke={C.cyan} width={3} opacity={.65}/>
+        <DrawPath
+          d="M -60 400 C 230 270, 420 320, 610 420 C 815 528, 970 475, 1150 350"
+          progress={interpolate(local,[0,30],[0,1],clamp)}
+          stroke={C.cyanSoft}
+          width={4}
+          opacity={.74}
+        />
+        <DrawPath
+          d="M -60 470 C 220 350, 430 375, 625 470 C 815 565, 985 530, 1160 410"
+          progress={interpolate(local,[7,37],[0,1],clamp)}
+          stroke={C.cyan}
+          width={3}
+          opacity={.60}
+        />
       </svg>
 
       <div style={{
@@ -340,7 +431,7 @@ export const MciNewChapter: React.FC = () => {
       <BlueprintBackground frame={frame}/>
       {frame < 72 ? <NewChapter frame={frame}/> : null}
       {frame >= 58 && frame < 202 ? <PeopleDataAI frame={frame}/> : null}
-      {frame >= 176 && frame < 226 ? <Convergence frame={frame}/> : null}
+      {frame >= 176 && frame < 228 ? <Convergence frame={frame}/> : null}
       {frame >= 198 && frame < 326 ? <RoleReveal frame={frame}/> : null}
       {frame >= 300 ? <LogoOutro frame={frame}/> : null}
     </AbsoluteFill>
