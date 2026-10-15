@@ -242,7 +242,7 @@ const PeopleDataAI: React.FC<{frame:number}> = ({frame}) => {
       {/* Individual construction rules, aligned to the text grid. */}
       <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
         <DrawPath d="M 72 520 L 337 520" progress={pPeople} stroke={C.graphite} width={2} opacity={.32}/>
-        <DrawPath d="M 411 520 L 650 520" progress={pData} stroke={C.graphite} width={2} opacity={.32}/>
+        <DrawPath d="M 500 520 L 690 520" progress={pData} stroke={C.graphite} width={2} opacity={.32}/>
         <DrawPath d="M 808 520 L 1005 520" progress={pAI} stroke={C.graphite} width={2} opacity={.32}/>
 
         {/* Final unified lock-up line */}
