@@ -433,7 +433,7 @@ export const MciNewChapter: React.FC = () => {
 
   return (
     <AbsoluteFill style={{background:C.navy,overflow:'hidden'}}>
-      <Audio src={staticFile('mci-new-chapter-sound.wav')} volume={1}/>
+      <Audio src={staticFile('mci-new-chapter-sound.mp3')} volume={1}/>
       <BlueprintBackground frame={frame}/>
       {frame < 72 ? <NewChapter frame={frame}/> : null}
       {frame >= 58 && frame < 202 ? <PeopleDataAI frame={frame}/> : null}
