@@ -179,24 +179,33 @@ const RevealWord: React.FC<{
   start:number;
   text:string;
   color?:string;
-}> = ({frame,start,text,color=C.white}) => {
+  lineProgress:number;
+}> = ({frame,start,text,color=C.white,lineProgress}) => {
   const p = interpolate(frame,[start,start+18],[0,1],clamp);
   return (
     <div style={{
       position:'relative',
-      width:'100%',
+      width:'max-content',
       fontFamily:'Arial,Helvetica,sans-serif',
       fontWeight:900,
       fontSize:72,
       letterSpacing:-2.8,
       lineHeight:1,
       color,
-      whiteSpace:'nowrap',
-      overflow:'hidden'
+      whiteSpace:'nowrap'
     }}>
       <div style={{
         clipPath:`inset(0 ${100-p*100}% 0 0)`
       }}>{text}</div>
+      <div style={{
+        width:'100%',
+        height:2,
+        marginTop:20,
+        background:C.graphite,
+        opacity:.32,
+        transform:`scaleX(${lineProgress})`,
+        transformOrigin:'left center'
+      }}/>
     </div>
   );
 };
@@ -224,26 +233,23 @@ const PeopleDataAI: React.FC<{frame:number}> = ({frame}) => {
         columnGap:22,
         alignItems:'center'
       }}>
-        <RevealWord frame={frame} start={68} text="PEOPLE"/>
+        <RevealWord frame={frame} start={68} text="PEOPLE" lineProgress={pPeople}/>
         <div style={{
           fontFamily:'Arial,Helvetica,sans-serif',
           fontSize:50,fontWeight:850,color:C.cyan,textAlign:'center',
           opacity:interpolate(frame,[84,94],[0,1],clamp)
         }}>×</div>
-        <RevealWord frame={frame} start={96} text="DATA"/>
+        <RevealWord frame={frame} start={96} text="DATA" lineProgress={pData}/>
         <div style={{
           fontFamily:'Arial,Helvetica,sans-serif',
           fontSize:50,fontWeight:850,color:C.cyan,textAlign:'center',
           opacity:interpolate(frame,[112,122],[0,1],clamp)
         }}>×</div>
-        <RevealWord frame={frame} start={124} text="AI"/>
+        <RevealWord frame={frame} start={124} text="AI" lineProgress={pAI}/>
       </div>
 
       {/* Individual construction rules, aligned to the text grid. */}
       <svg viewBox="0 0 1080 1350" width="1080" height="1350" style={{position:'absolute',inset:0}}>
-        <DrawPath d="M 72 520 L 337 520" progress={pPeople} stroke={C.graphite} width={2} opacity={.32}/>
-        <DrawPath d="M 530 520 L 792 520" progress={pData} stroke={C.graphite} width={2} opacity={.32}/>
-        <DrawPath d="M 808 520 L 1005 520" progress={pAI} stroke={C.graphite} width={2} opacity={.32}/>
 
         {/* Final unified lock-up line */}
         <DrawPath d="M 72 552 L 1005 552" progress={lock} width={3}/>
@@ -310,7 +316,7 @@ const Convergence: React.FC<{frame:number}> = ({frame}) => {
 const RoleReveal: React.FC<{frame:number}> = ({frame}) => {
   const start = 204;
   const local = Math.max(0,frame-start);
-  const opacity = fadeWindow(frame,198,326,8);
+  const opacity = fadeWindow(frame,198,341,8);
 
   const stage = spring({
     frame:local,
@@ -372,7 +378,7 @@ const RoleReveal: React.FC<{frame:number}> = ({frame}) => {
 };
 
 const LogoOutro: React.FC<{frame:number}> = ({frame}) => {
-  const start = 300;
+  const start = 315;
   const local = Math.max(0,frame-start);
   const paper = interpolate(local,[16,50],[0,1],clamp);
   const logo = spring({
@@ -432,8 +438,8 @@ export const MciNewChapter: React.FC = () => {
       {frame < 72 ? <NewChapter frame={frame}/> : null}
       {frame >= 58 && frame < 202 ? <PeopleDataAI frame={frame}/> : null}
       {frame >= 176 && frame < 228 ? <Convergence frame={frame}/> : null}
-      {frame >= 198 && frame < 326 ? <RoleReveal frame={frame}/> : null}
-      {frame >= 300 ? <LogoOutro frame={frame}/> : null}
+      {frame >= 198 && frame < 341 ? <RoleReveal frame={frame}/> : null}
+      {frame >= 315 ? <LogoOutro frame={frame}/> : null}
     </AbsoluteFill>
   );
 };
