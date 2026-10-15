@@ -61,6 +61,7 @@ const App: React.FC = () => {
           audioBitrate: 'high',
           hardwareAcceleration: 'no-preference',
           pageResponsiveness: 'high',
+          delayRenderTimeoutInMilliseconds: 120000,
           outputWritable,
           onProgress: ({progress: p, renderEstimatedTime}) => {
             setProgress(p);
@@ -83,6 +84,7 @@ const App: React.FC = () => {
           audioBitrate: 'high',
           hardwareAcceleration: 'no-preference',
           pageResponsiveness: 'high',
+          delayRenderTimeoutInMilliseconds: 120000,
           outputTarget: 'arraybuffer',
           onProgress: ({progress: p, renderEstimatedTime}) => {
             setProgress(p);
