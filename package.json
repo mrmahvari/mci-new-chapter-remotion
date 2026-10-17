@@ -8,6 +8,8 @@
     "download": "vite --host 0.0.0.0 --port 4173"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "0.12.15",
+    "@ffmpeg/util": "0.12.2",
     "@remotion/cli": "4.0.530",
     "@remotion/media": "4.0.530",
     "@remotion/web-renderer": "4.0.530",
