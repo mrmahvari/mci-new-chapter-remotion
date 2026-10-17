@@ -5,7 +5,7 @@
   "scripts": {
     "start": "remotion studio src/index.ts",
     "render": "remotion render src/index.ts MciNewChapter out/mci-new-chapter.mp4",
-    "download": "vite --host 0.0.0.0 --port 4173"
+    "download": "vite --host 0.0.0.0 --port 4173 --force"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "0.12.15",
